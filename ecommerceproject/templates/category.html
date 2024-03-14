@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block metadescription %}
+    {% if category %}
+        {{ category.description|truncatewords:155 }}
+    {% else %}
+        Welcome to ABC store where you can buy different items
+    {% endif %}
+{% endblock %}
+
+{% block title %}
+    {% if category %}
+        {{ category.name }} - ABC store
+    {% else %}
+        See our new collections - ABC store
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if category %}
+        <div class="container">
+            <div class="row my_row_class">
+                <div class="col mx-auto">
+                    <p><a href="{% url 'shop:allProdCat' %}">Our Product Collections</a></p>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row my_row_class">
+                <div class="col mx-auto">
+                    <img class="my_image" src="{{ category.image.url }}" alt="{{ category.name }}" style="height: 500px; width: 500px;">
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="container">
+            <h1 class="text-center my_title">{{ category.name }}</h1>
+            <p class="text-justify">{{ category.description }}</p>
+        </div>
+    {% else %}
+        <div class="container">
+            <img class="my_image my_image_padding" src="{% static 'img/banner.jpg' %}" alt="Our Products" width="900px;">
+        </div>
+        <br>
+        <div class="container">
+            <h1 class="text-center my_title">Our Products Collections</h1>
+            <p class="text-justify">Welcome to our online shop, where you'll find a wide range of stationery essentials to fuel your creativity and productivity. Whether you're jotting down notes, sketching ideas, or organizing your thoughts, we have everything you need. Explore our collection of premium pens, perfect for smooth writing experiences and elegant designs. Need something more versatile? Check out our selection of high-quality pencils, ideal for sketching, drafting, or shading. Keep your thoughts organized with our stylish diaries and notebooks, available in various sizes and designs to suit your style. And don't forget to grab a reliable eraser to correct any mistakes effortlessly. Shop now and elevate your stationery game with us!</p>
+        </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="row mx-auto">
+            {% for product in products.object_list %}
+                <div class="my_bottom_margin col-9 col-sm-12 col-md-4 col-lg-4">
+                    <div class="card text-center">
+                        {% if product.image %}
+                            <a href="{{ product.get_url }}">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" style="height: 200px; width: 200px;">
+                            </a>
+                        {% endif %}
+                        <div class="card-body">
+                            <h4>{{ product.name }}</h4>
+                            <p>{{ product.price }}</p> <!-- Consider formatting the price -->
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="container">
+        <div class="mx-auto">
+            {% if products.paginator.num_pages > 1 %}
+                <hr>
+                <div class="text-center">
+                    {% for pg in products.paginator.page_range %}
+                        <a href="?page={{ pg }}" class="btn btn-light btn-sm {% if products.number == pg %} active{% endif %}">{{ pg }}</a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
